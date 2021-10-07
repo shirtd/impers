@@ -7,21 +7,6 @@ import pickle as pkl
 import numpy as np
 import sys, time, gc
 
-import scipy
-import scipy.fftpack
-
-
-def grf(alpha=-3.0, m=128, flag_normalize=True):
-    size = int(np.sqrt(m))
-    k_ind = np.mgrid[:size, :size] - int((size + 1) / 2)
-    k_idx = scipy.fftpack.fftshift(k_ind)
-    # Defines the amplitude as a power law 1/|k|^(alpha/2)
-    amplitude = np.power(k_idx[0] ** 2 + k_idx[1] ** 2 + 1e-10, alpha / 4.0)
-    amplitude[0,0] = 0
-    # Draws a complex gaussian random noise with normal (circular) distribution
-    noise = np.random.normal(size = (size, size)) + 1j * np.random.normal(size = (size, size))
-    gfield = np.fft.ifft2(noise * amplitude).real # To real space
-    return (gfield - gfield.min()) / (gfield.max() - gfield.min())
 
 def tqit(it, verbose=False, desc=None, n=None):
     return tqdm(it, desc=desc, total=n) if verbose else it
@@ -46,7 +31,6 @@ def save(dat, fcache):
         pkl.dump(dat, f)
         gc.enable()
     print(' %0.3fs' % (time.time() - t0))
-
 
 def insert(L, i, x):
     L[i] += [x]
@@ -86,7 +70,7 @@ def get_delta(n, w=1, h=1):
     return 2 / (n-1) * np.sqrt(w ** 2 + h ** 2)
 
 def lipschitz(f, P):
-    return max(abs(fp - fq) / la.norm(p - q) for (fp,p),(fq,q) in tqdm(list(combinations(zip(f,P),2))))
+    return max(abs(fp - fq) / la.norm(p - q) for (fp,p),(fq,q) in combinations(zip(f,P),2))
 
 def scale(x):
     return (x - x.min()) / (x.max() - x.min())
