@@ -2,6 +2,7 @@
 test.py
 *.stash
 *__pycache__
+*.pyc
 figures
 bary.py
 lips.py
