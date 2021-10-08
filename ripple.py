@@ -22,10 +22,10 @@ def induce(D, V, f, key, finduce=max):
         s.data[key] = V.dual(s).data[key] = finduce(f[i] for i in s)
 
 def max_ext(Q, fQ, l, p):
-    return min(f + l*la.norm(p - q) for q,f in zip(Q, fQ))
+    return min(f + l*la.norm(p - q) + 0.07 for q,f in zip(Q, fQ))
 
 def min_ext(Q, fQ, l, p):
-    return max(f - l*la.norm(p - q) for q,f in zip(Q, fQ))
+    return max(f - l*la.norm(p - q) - 0.07 for q,f in zip(Q, fQ))
 
 def lipschitz_extend(D, V, P, Q, fQ, l, finduce=max, verbose=True):
     it = tqdm(P, desc='[ min/max ext') if verbose else P
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     np.random.seed(SEED)
 
     # config
-    SAVE = True
+    SAVE = False
     FIGDIR = 'figures'
     LABEL = 'delaunay'
     WIDTH, HEIGHT = 1, 1
