@@ -43,8 +43,8 @@ if __name__ == '__main__':
     WIDTH, HEIGHT = 1, 1
     _f, _l, _w = 2, 2, 1
     GRID_RES = 1024
-    N_P = 2000
-    N_Q = 1000
+    N_P = 1000 # 2000
+    N_Q = 500 # 1000
 
     # field init
     N_GRID = int(WIDTH*GRID_RES) * int(HEIGHT*GRID_RES)
@@ -68,10 +68,31 @@ if __name__ == '__main__':
     D = DelaunayComplex(P) #, verbose=True)
     V = VoronoiComplex(D) #, verbose=True)
 
+    # if os.path.exists('cache.pkl'):
+    #     print('[ loading cache ]')
+    #     D, V = pkl.load(open('cache.pkl', 'rb'))
+    # else:
+    #     print('[ caching ]' %)
+    #     pkl.dump(open('cache.pkl', 'wb'), (D,V))
     # run
     P_FUN_max, P_FUN_min = lipschitz_extend(D, V, P, Q, Q_FUN, lips)
 
-    # plot
+    # # plot
+    # plt.ion()
+    # fig, ax = plt.subplots(1,1, figsize=(6,5))
+    # plot_breaks(ax, D, field, BOUNDS, max(P_FUN_max), NBREAK, SAVE, FIGDIR, LABEL)
+
+    # pers plot
     plt.ion()
-    fig, ax = plt.subplots(1,1, figsize=(6,5))
-    plot_breaks(ax, D, field, BOUNDS, max(P_FUN_max), NBREAK, SAVE, FIGDIR, LABEL)
+    fig, ax = plt.subplots(1,3, sharex=True, sharey=True, figsize=(15,5))
+
+    F = Filtration(D, 'maxext', False)
+    G = Filtration(D, 'minext', False)
+    # B = D.get_boundary(BOUNDS)
+    R =  set() # {F.index(s) for s in B}
+    HF = Diagram(D, F, verbose=True)
+    HG = Diagram(D, G, verbose=True)
+    Him = Diagram(D, G, pivot=F, verbose=True)
+    plot_diagrams(ax[0], HF.diagram)
+    plot_diagrams(ax[1], HG.diagram)
+    plot_diagrams(ax[2], Him.diagram)

@@ -7,11 +7,11 @@ import numpy as np
 class Reduction:
     __slots__ = ['__sequence', '__n', 'R', 'coh', 'dim',
                     'unpairs', 'pairs', 'copairs', 'D']
-    def __init__(self, K, F, R, coh):
+    def __init__(self, K, F, R, coh, pivot=None):
         self.__sequence, self.__n = F.get_range(R, coh), len(F) - len(R)
         self.R, self.coh, self.dim = R, coh, F.dim
         self.unpairs, self.pairs, self.copairs = set(self), {}, {}
-        self.D = F.get_matrix(K, self, coh)
+        self.D = F.get_matrix(K, self, coh, pivot)
     def __iter__(self):
         for seq in self.__sequence:
             yield from seq
@@ -22,6 +22,7 @@ class Reduction:
             b, d = d, b
         self.pairs[b] = d
         self.copairs[d] = b
+        # TODO (I)
         self.unpairs.remove(b)
         self.unpairs.remove(d)
     def __pair(self, low):
@@ -37,12 +38,13 @@ class Reduction:
                     self.D[i] += self.D[self.__pair(low)]
                     low = self.D[i].get_pivot(self.R)
                 if low is not None:
+                    # TODO (I) self[F.get_index(pivot.get_simplex(b))]
                     self[low] = i
 
 class Diagram(Reduction):
     __slots__ = Reduction.__slots__ + ['diagram', 'fmap']
-    def __init__(self, K, F, R=set(), coh=False, clearing=False, verbose=False):
-        Reduction.__init__(self, K, F, R, coh)
+    def __init__(self, K, F, R=set(), coh=False, pivot=None, clearing=False, verbose=False):
+        Reduction.__init__(self, K, F, R, coh, pivot)
         self.reduce(clearing, verbose)
         self.diagram, self.fmap = self.get_diagram(K, F)
     def __call__(self, i):
