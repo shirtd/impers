@@ -22,26 +22,29 @@ def plot_field(axis, f, bounds, thresh=None, cmap='gray', **kw):
         print(thresh)
         return f
 
-def plot_breaks(axis, K, field, bounds, mx, nbreak=10, save=False, figdir='figures', label='alpha'):
-    axis.axis('off')
-    axis.set_xlim(*bounds[0])
-    axis.set_ylim(*bounds[1])
-    plt.tight_layout()
-    if save:
-        if not os.path.exists(figdir):
-            os.mkdir(figdir)
-    for i, alpha in enumerate(np.linspace(0, mx, nbreak+1)[1:]):
-        elems = [plot_field(axis, field, bounds, alpha, alpha=0.5, zorder=0)]
-        for s in K:
-            for key, color, ord in [('maxext', 'purple', 6), ('minext','green', 5)]:
-                if s(key) <= alpha:
-                    elems += plot_cell(axis, K.P, s, color, ord)
-        plt.pause(0.1)
-        if save:
-            fname = os.path.join(figdir, '%s%d.png' % (label, i))
-            print('saving %s' % fname)
-            plt.savefig(fname, dpi=300, transparent=True)
-        else:
-            input('%s: %0.2f' % (label, alpha))
-        for e in elems:
-            e.remove()
+# def plot_breaks(all_axes, K, field, breaks, bounds, save=False, figdir='figures', label='alpha'):
+#     axes = all_axes[2]
+#     for axis in axes:
+#         axis.axis('off')
+#         axis.set_xlim(*bounds[0])
+#         axis.set_ylim(*bounds[1])
+#     plt.tight_layout()
+#     if save:
+#         if not os.path.exists(figdir):
+#             os.mkdir(figdir)
+#     for i, alpha in enumerate(breaks):
+#         for axes
+#         elems = [plot_field(axes[2], field, bounds, alpha, alpha=0.5, zorder=0)]
+#         for s in K:
+#             for axis, key, color, ord in [(axes[0], 'maxext', 'purple', 6), (axes[1], 'minext','green', 5)]:
+#                 if s(key) <= alpha:
+#                     elems += plot_cell(axis, K.P, s, color, ord)
+#         plt.pause(0.1)
+#         if save:
+#             fname = os.path.join(figdir, '%s%de-2.png' % (label, int(alpha*100)))
+#             print('saving %s' % fname)
+#             plt.savefig(fname, dpi=300, transparent=True)
+#         else:
+#             input('%s: %0.2f' % (label, alpha))
+#         for e in elems:
+#             e.remove()

@@ -115,7 +115,7 @@ if __name__ == '__main__':
         plt.pause(0.1)
         fname = os.path.join(FIGDIR, 'alpha%d.png' % i)
         print('saving %s' % fname)
-        plt.savefig(fname, dpi=500, transparent=True)
-        # input('alpha = %0.2f' % alpha)
+        # plt.savefig(fname, dpi=500, transparent=True)
+        input('alpha = %0.2f' % alpha)
         for e in elems:
             e.remove()

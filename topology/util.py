@@ -8,6 +8,9 @@ import numpy as np
 import sys, time, gc
 
 
+def dio_diagram(D):
+    return [np.array([[p.birth, p.death] for p in d]) if len(d) else np.ndarray((0,2)) for d in D]
+
 def tqit(it, verbose=False, desc=None, n=None):
     return tqdm(it, desc=desc, total=n) if verbose else it
 

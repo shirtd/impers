@@ -25,32 +25,36 @@ def plot_cells(vfig, K, cells, dim, **kwargs):
         else pyv.PolyData(K.P[cells]))
     return mesh, vfig.add_mesh(mesh, **kwargs)
 
-def get_lim(dgms):
-    return max(d if d < np.inf else b for dgm in dgms for b,d in dgm)
+def get_lims(dgms):
+    mx = max(d if d < np.inf else b for dgm in dgms for b,d in dgm)
+    mn = min(b for dgm in dgms for b,d in dgm)
+    return mn, mx
 
-def init_diagram(axis, lim):
-    axis.plot([0, 1.2*lim], [0,1.2*lim], c='black', alpha=0.5, zorder=1)
-    axis.plot([0, lim], [lim,lim], c='black', ls=':', alpha=0.5, zorder=1)
-    axis.plot([lim, lim], [lim, 1.2*lim], c='black', ls=':', alpha=0.5, zorder=1)
+def init_diagram(axis, lims):
+    axis.plot([lims[0], 1.2*lims[1]], [lims[0],1.2*lims[1]], c='black', alpha=0.5, zorder=1)
+    axis.plot(lims, [lims[1],lims[1]], c='black', ls=':', alpha=0.5, zorder=1)
+    axis.plot([lims[1], lims[1]], [lims[1], 1.2*lims[1]], c='black', ls=':', alpha=0.5, zorder=1)
 
 def lim_dgm(dgm, lim):
     return np.array([[b, d if d < np.inf else 1.2*lim] for b,d in dgm])
 
-def plot_diagrams(axis, dgms, lim=None, init=True):
-    if lim is None:
-        lim = get_lim(dgms)
+def plot_diagrams(axis, dgms, lims=None, title=None, init=True):
+    if lims is None:
+        lims = get_lims(dgms)
     if init:
-        init_diagram(axis, lim)
+        init_diagram(axis, lims)
     elems = []
     for dim, dgm in enumerate(dgms):
         if len(dgm):
-            d = lim_dgm(dgm, lim)
+            d = lim_dgm(dgm, lims[1])
             elems += [axis.scatter(d[:,0], d[:,1], s=7, zorder=2, alpha=0.3, label='H%d' % dim)]
         else:
             elems += [axis.scatter([], [], s=7, zorder=2, alpha=0.3, label='H%d' % dim)]
     if init:
         axis.legend()
-    return lim, elems
+    if title is not None:
+        axis.set_title(title)
+    return lims, elems
 
 def save_plot(dir, prefix, name, dpi=500):
     fname = os.path.join(dir,'%s_%s.png' % (prefix, name))

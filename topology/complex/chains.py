@@ -8,14 +8,15 @@ class Column:
     def __init__(self, elements, column):
         self.elements, self.column = elements, column
         self.n, self.m = len(self.elements), len(self.column)
-    def get_pivot(self, relative=set()):
+    def get_pivot(self, relative=set(), imap=None):
         if self.m == 0:
             return None
         if not relative:
-            return self.column[-1]
+            i = self.column[-1]
+            return i if imap is None else imap[i]
         for i in self.column[::-1]:
-            if not i in relative:
-                return i
+            if not imap[i] in relative:
+                return imap[i]
         return None
     def _add_column(self, other):
         column = []
