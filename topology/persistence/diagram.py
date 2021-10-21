@@ -4,7 +4,8 @@ from functools import reduce
 from tqdm import tqdm
 import numpy as np
 
-# TODO row and column relative indices
+# TODO  row and column relative indices
+#       unpairs contains death indices, pairs contains birth indices
 
 class Reduction:
     __slots__ = ['__sequence', '__n', 'R', 'coh', 'dim','pivot_map',
@@ -26,7 +27,7 @@ class Reduction:
         self.pairs[b] = d
         self.copairs[d] = b
         # TODO (I)
-        self.unpairs.remove(b)
+        self.unpairs.remove(self.pivot_map[b])
         if d in self.unpairs:
             self.unpairs.remove(d)
     def __pair(self, low):
@@ -37,10 +38,10 @@ class Reduction:
     def reduce(self, clearing=False, verbose=False, desc='[ persist'):
         for i in (tqdm(self, total=len(self), desc=desc) if verbose else self):
             if not (clearing and self.__paired(i)):
-                low = self.D[i].get_pivot(self.R, self.pivot_map)
+                low = self.D[i].get_pivot(self.R)#, self.pivot_map)
                 while self.__paired(low):
                     self.D[i] += self.D[self.__pair(low)]
-                    low = self.D[i].get_pivot(self.R, self.pivot_map)
+                    low = self.D[i].get_pivot(self.R)#, self.pivot_map)
                 if low is not None:
                     self[low] = i
 
@@ -71,7 +72,7 @@ class Diagram(Reduction):
         fmap = {}
         dgms = [[] for d in range(self.dim+1)]
         for i, j in self.items():
-            b, d = K[F[i]], K[F[self[i]]]
+            b, d = K[pivot[i]], K[F[self[i]]]
             fmap[i] = [b(pivot.key), d(F.key)][::(-1 if F.reverse else 1)]
             if fmap[i][0] < fmap[i][1]:
                 dgms[b.dim].append(fmap[i])

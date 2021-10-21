@@ -58,9 +58,14 @@ def to_path(vertices, nbrs):
     cur = V.pop()
     path = [cur]
     while len(V):
-        cur = nbrs[cur].intersection(V).pop()
-        path.append(cur)
-        V.remove(cur)
+        s = nbrs[cur].intersection(V)
+        if len(s):
+            cur = s.pop()
+            path.append(cur)
+            V.remove(cur)
+        else:
+            path = path[::-1]
+            cur = path[-1]
     return path
 
 def diff(p):

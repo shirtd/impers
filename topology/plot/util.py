@@ -38,7 +38,7 @@ def init_diagram(axis, lims):
 def lim_dgm(dgm, lim):
     return np.array([[b, d if d < np.inf else 1.2*lim] for b,d in dgm])
 
-def plot_diagrams(axis, dgms, lims=None, title=None, init=True):
+def plot_diagrams(axis, dgms, lims=None, title=None, init=True, eps=0):
     if lims is None:
         lims = get_lims(dgms)
     if init:

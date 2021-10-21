@@ -76,16 +76,16 @@ if __name__ == '__main__':
     N_P = 2000 # 2000
     N_Q = 1000 # 1000
 
-    # CIRCLE_N = 256
-    # CIRCLE_R = [0.5]
-    # CIRCLE_C = [[0,0]]
+    CIRCLE_N = 256
+    CIRCLE_R = [0.5]
+    CIRCLE_C = [[0,0]]
 
     # field init
     N_GRID = int(WIDTH*GRID_RES) * int(HEIGHT*GRID_RES)
     GRID_X, GRID_Y = get_grid(GRID_RES, WIDTH, HEIGHT)
     BOUNDS = np.array([[-WIDTH, WIDTH], [-HEIGHT, HEIGHT]])
-    field = get_ripple(GRID_X, GRID_Y, _f, _l, _d, _w, _s, -3, False)
-    # field = get_circle(GRID_X, GRID_Y, CIRCLE_N, CIRCLE_R, CIRCLE_C)
+    # field = get_ripple(GRID_X, GRID_Y, _f, _l, _d, _w, _s, -3, False)
+    field = get_circle(GRID_X, GRID_Y, CIRCLE_N, CIRCLE_R, CIRCLE_C)
     GRID_POINTS = np.vstack([GRID_X.flatten(), GRID_Y.flatten()]).T
     GRID_FUN = field.flatten()
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     Q = GRID_POINTS[I_Q_GRID]
     Q_FUN = GRID_FUN[I_Q_GRID]
 
-    lips = ripple_lips(0, max(WIDTH, HEIGHT), GRID_RES, _f, _l, _d, _w, _s)
+    lips = 1 # ripple_lips(0, max(WIDTH, HEIGHT), GRID_RES, _f, _l, _d, _w, _s)
     # complexes
 
     # P_FUN_max, P_FUN_min = lipschitz_extend(V, D, Q, Q_FUN, lips, min)
@@ -170,8 +170,8 @@ if __name__ == '__main__':
     # R = {filt['minext'].index(V.dual(s)) for s in B}
     # hom[image] = Diagram(V, filt['minext'], R, pivot=filt['maxext'])
 
-    # PLOT DIAGRAMS
-    #
+    PLOT DIAGRAMS
+
     plot_diagrams(ax[0,0], hom['Pfun'].diagram, lims, 'induced on P (%d pts)' % N_P)
     plot_diagrams(ax[0,1], hom['Qfun'].diagram, lims, 'induced on Q (%d pts)' % N_Q)
     plot_diagrams(ax[0,2], Ddio, lims, 'grid (%dx%d)' % (GRID_RES, GRID_RES))
@@ -189,13 +189,13 @@ if __name__ == '__main__':
     # ax[2,1].patch.set_facecolor('gray')
     ax[2,1].add_patch(plt.Rectangle([-1,-1],2,2, color='gray', zorder=0))
     plt.tight_layout()
+
+    # for x in ax[2]:
+    #     x.scatter(Q[:,0], Q[:,1], c='red', zorder=10, marker=',', s=0.5)
     #
-    # # for x in ax[2]:
-    # #     x.scatter(Q[:,0], Q[:,1], c='red', zorder=10, marker=',', s=0.5)
-    # #
-    # for e in V(1):
-    #     for x in ax[2]:
-    #         x.plot(V.P[e,0], V.P[e,1], c='black', zorder=1, lw=0.5)
+    for e in V(1):
+        for x in ax[2]:
+            x.plot(V.P[e,0], V.P[e,1], c='black', zorder=1, lw=0.5)
 
     elems = []
     for i, alpha in enumerate(BREAKS):
@@ -227,65 +227,3 @@ if __name__ == '__main__':
             input('%s: %0.2f' % (LABEL, alpha))
         while len(elems):
             elems.pop().remove()
-
-    # # PLOT IMAGES
-    #
-    # # for axis in ax[2]:
-    # #     axis.axis('off')
-    # #     axis.set_xlim(*BOUNDS[0])
-    # #     axis.set_ylim(*BOUNDS[1])
-    # # if SAVE:
-    # #     if not os.path.exists(FIGDIR):
-    # #         os.mkdir(FIGDIR)
-    # # ax[2,1].patch.set_facecolor('gray')
-    # ax[1,1].add_patch(plt.Rectangle([-1,-1],2,2, color='gray', zorder=0))
-    # plt.tight_layout()
-    # for x in ax.flatten():
-    #     x.axis('off')
-    #
-    # for e in V(1):
-    #     for x in np.hstack((ax[:,0], ax[:,2])):
-    #         x.plot(V.P[e,0], V.P[e,1], c='black', zorder=1, lw=0.5)
-    #
-    # elems = []
-    # for i, alpha in enumerate(BREAKS):
-    #     # ax[2,1].set_facecolor('gray')
-    #     for fq,q in zip(Q_FUN, Q):
-    #         if (alpha - fq) / lips > 0:
-    #             elems += [ax[0,1].add_patch(plt.Circle(q, (alpha - fq) / lips, color='gray', zorder=1))]
-    #         if (fq - alpha) / lips > 0:
-    #             elems += [ax[1,1].add_patch(plt.Circle(q, (fq - alpha) / lips, color='white', zorder=1))]
-    #     elems += [plot_field(ax[2,1], field, BOUNDS, alpha, alpha=0.5, zorder=0)]
-    #     for s in (V if LABEL == 'voronoi' else  D): #
-    #         # for axis, key, color, ord in [(ax[0], 'maxext', 'purple', 6), (ax[1], 'minext','green', 5)]:
-    #         fplt, K = (plot_cell, D) if LABEL == 'delaunay' else (plot_voronoi, V)
-    #         if s('maxext') <= alpha - lips*delta:
-    #             elems += fplt(ax[0,0], K, s, 'purple', 6)
-    #             elems += fplt(ax[2,0], K, s, 'purple', 6)
-    #         if s('maxext') <= alpha + lips*delta:
-    #             elems += fplt(ax[0,2], K, s, 'purple', 6)
-    #         if s('minext') <= alpha - lips*delta:
-    #             elems += fplt(ax[1,0], K, s, 'green', 5)
-    #         if s('minext') <= alpha + lips*delta:
-    #             elems += fplt(ax[1,2], K, s, 'green', 5)
-    #             elems += fplt(ax[2,2], K, s, 'green', 5)
-    #     plt.pause(0.1)
-    #     if SAVE:
-    #         if not os.path.exists(FIGDIR, LABEL):
-    #             os.mkdir(os.path.join(FIGDIR, LABEL))
-    #         for x,l in zip(ax, ('max', 'min', 'image')):
-    #             if not os.path.exists(FIGDIR, LABEL, l):
-    #                 os.mkdir(os.path.join(FIGDIR, LABEL, l))
-    #             f0name = os.path.join(FIGDIR, LABEL, l, '%s-delta_%s%da%de-1.png' % (l, LABEL, i, int(alpha*10)))
-    #             print('saving %s' % f0name)
-    #             plt.savefig(f0name, extent=x[0].get_window_extent().transformed(fig.dpi_scale_trans.inverted()), dpi=300)
-    #             f1name = os.path.join(FIGDIR, LABEL, l, '%s_ext_%da%de-1.png' % (l, i, int(alpha*10)))
-    #             plt.savefig(f1name, extent=x[1].get_window_extent().transformed(fig.dpi_scale_trans.inverted()), dpi=300)
-    #             print('saving %s' % f1name)
-    #             f2name = os.path.join(FIGDIR, LABEL, l, '%s+delta_%s%da%de-1.png' % (l, LABEL, i, int(alpha*10)))
-    #             print('saving %s' % f2name)
-    #             plt.savefig(f2name, extent=x[2].get_window_extent().transformed(fig.dpi_scale_trans.inverted()), dpi=300)
-    #     else:
-    #         input('%s: %0.2f' % (LABEL, alpha))
-    #     while len(elems):
-    #         elems.pop().remove()

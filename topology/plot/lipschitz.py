@@ -3,13 +3,22 @@ import numpy as np
 import os
 
 
-def plot_cell(axis, P, s, color, ord):
+def plot_cell(axis, D, s, color, ord):
     if s.dim == 0:
-        return [axis.scatter(P[s,0], P[s,1], s=1, c=color, zorder=ord)]
+        return [axis.scatter(D.P[s,0], D.P[s,1], s=1, c=color, zorder=ord)]
     elif s.dim == 1:
-        return axis.plot(P[s,0], P[s,1], c=color, zorder=ord-1, alpha=0.7, lw=0.5)
+        return axis.plot(D.P[s,0], D.P[s,1], c=color, zorder=ord-1, alpha=0.7, lw=0.5)
     elif s.dim == 2:
-        return [axis.add_patch(plt.Polygon(P[s], color=color, alpha=0.4, zorder=ord-2, ec=None))]
+        return [axis.add_patch(plt.Polygon(D.P[s], color=color, alpha=0.4, zorder=ord-2, ec=None))]
+
+def plot_voronoi(axis, V, s, color, ord):
+    if s.dim == 0:
+        return [] # [axis.scatter(V.P[s,0], V.P[s,1], s=1, c=color, zorder=ord)]
+    elif s.dim == 1 and len(s) > 1:
+        return [] # axis.plot(V.P[s,0], V.P[s,1], c=color, zorder=ord-1, alpha=0.7, lw=0.5)
+    elif s.dim == 2:
+        return [axis.add_patch(plt.Polygon(V.P[V.orient_face(s)], color=color, alpha=0.4, zorder=ord-2, ec=None))]
+    return []
 
 def plot_field(axis, f, bounds, thresh=None, cmap='gray', **kw):
     if thresh is not None:
